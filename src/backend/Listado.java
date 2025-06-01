@@ -5,6 +5,7 @@
 package backend;
 
 import frontend.Principal;
+import backend.Lista;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -18,15 +19,6 @@ public class Listado {
     public Listado(){}
     Principal Main;
     
-    
-    
-    Map<String, int> asignaturas = Map.of(
-        Main.cbAsignatura)
-    Map<String, String> tipos = new HashMap<>();
-    Map<String, int> niveles = new HashMap<>();
-    
-    
-   
     public void MostrarLista(JTable tbLista){
         Conexion con = new Conexion();
         Connection cn = con.EnlaceSQL();
