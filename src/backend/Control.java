@@ -13,9 +13,9 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.*;
 import javax.swing.*;
-import java.lang.StringBuilder;
 
 public class Control implements ActionListener{
+    Principal main;
     Evaluacion vista;
     List<Pregunta> preguntas;
     Map<Integer, Integer> respuestasUsuario;
@@ -24,8 +24,9 @@ public class Control implements ActionListener{
     Conexion con = new Conexion();
     Connection cn = con.EnlaceSQL();
     
-    public Control(Evaluacion vista) {
+    public Control(Evaluacion vista, Principal main) {
         this.vista = vista;
+        this.main = main;
         this.preguntas = new ArrayList<>();
         this.respuestasUsuario = new HashMap<>();
         this.indice = 0;
@@ -34,6 +35,10 @@ public class Control implements ActionListener{
         this.vista.btnSiguiente.addActionListener(this);
         this.vista.btnAnterior.addActionListener(this);
         this.vista.btnReiniciar.addActionListener(this);
+        
+        this.main.btnAddPreguntas.addActionListener(this);
+        this.main.btnAbrirEvaluacion.addActionListener(this);
+        this.main.btnSalir.addActionListener(this);
         
         this.vista.btnAnterior.setEnabled(false);
         this.vista.btnReiniciar.setEnabled(false);
@@ -46,6 +51,23 @@ public class Control implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         
+        //Pantalla Crear
+        if (source == main.btnAddPreguntas) {
+            String tipo = main.cbTipo.getSelectedItem().toString();
+            String nivel = main.cbBloom.getSelectedItem().toString();
+            int cantidad = (Integer) main.cbCantidad.getValue();
+            String asignatura = main.cbAsignatura.getSelectedItem().toString();
+
+            Examen ex = new Examen();
+            ex.agregarPreguntasAExamen(tipo, nivel, cantidad, asignatura, main.tbLista);
+
+            LimpiarPrincipal();
+        } else if (source == main.btnSalir) {
+            System.out.println("Botón salir presionado.");
+            System.exit(0);
+        }
+        
+        //Pantalla Preguntas
         if (source == vista.btnIniciar) {
             iniciarEvaluacion();
         } else if (source == vista.btnSiguiente) {
@@ -80,6 +102,13 @@ public class Control implements ActionListener{
             reiniciarEvaluacion();
             mostrarPregunta(indice);
         }
+    }
+    
+    private void LimpiarPrincipal() {
+        main.cbAsignatura.setSelectedIndex(0);
+        main.cbBloom.setSelectedIndex(0);
+        main.cbTipo.setSelectedIndex(0);
+        main.cbCantidad.setValue(0);
     }
     
     private void mostrarPregunta(int index) {

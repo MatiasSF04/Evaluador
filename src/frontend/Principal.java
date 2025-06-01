@@ -4,10 +4,8 @@
  */
 package frontend;
 
-/**
- *
- * @author matias
- */
+import backend.Control;
+
 public class Principal extends javax.swing.JFrame {
 
     /**
@@ -33,12 +31,12 @@ public class Principal extends javax.swing.JFrame {
         btnAbrirEvaluacion = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         cbTipo = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblTipo = new javax.swing.JLabel();
+        lblBloom = new javax.swing.JLabel();
         cbBloom = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
+        lblAsignatura = new javax.swing.JLabel();
         cbAsignatura = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
+        lblCantidad = new javax.swing.JLabel();
         cbCantidad = new javax.swing.JSpinner();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbLista = new javax.swing.JTable();
@@ -95,11 +93,11 @@ public class Principal extends javax.swing.JFrame {
         cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "Seleccion Multiple", "Verdadero o Falso" }));
         cbTipo.setToolTipText("Aquí se elige el tipo de preguntas que vas a añadir al examen.");
 
-        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
-        jLabel1.setText("Tipo de Pregunta");
+        lblTipo.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        lblTipo.setText("Tipo de Pregunta");
 
-        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
-        jLabel2.setText("Taxonomía de Bloom");
+        lblBloom.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        lblBloom.setText("Taxonomía de Bloom");
 
         cbBloom.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         cbBloom.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "1. Recordar", "2. Comprender", "3. Aplicar", "4. Analizar", "5. Evaluar", "6. Crear" }));
@@ -110,8 +108,8 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
-        jLabel3.setText("Asignatura");
+        lblAsignatura.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        lblAsignatura.setText("Asignatura");
 
         cbAsignatura.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         cbAsignatura.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "1. Matemáticas", "2. Programación", "3. Bases de Datos", "4. Sistemas Operativos y Redes" }));
@@ -122,8 +120,8 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
-        jLabel4.setText("Número de Preguntas");
+        lblCantidad.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        lblCantidad.setText("Número de Preguntas");
 
         cbCantidad.setModel(new javax.swing.SpinnerNumberModel());
 
@@ -153,10 +151,10 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(FondoEleccionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cbBloom, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbAsignatura, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblBloom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblAsignatura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbCantidad)
                     .addComponent(cbTipo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
@@ -177,21 +175,21 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addComponent(lblTituloMain)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblAsignatura, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(FondoEleccionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FondoEleccionLayout.createSequentialGroup()
                         .addComponent(cbAsignatura, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(21, 21, 21)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblBloom, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbBloom, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(FondoEleccionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,7 +270,11 @@ public class Principal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Principal().setVisible(true);
+                Principal principal = new Principal();
+                Evaluacion evaluacion = new Evaluacion();
+                Control control = new Control(evaluacion, principal);
+    
+                principal.setVisible(true);
             }
         });
     }
@@ -287,11 +289,11 @@ public class Principal extends javax.swing.JFrame {
     public javax.swing.JSpinner cbCantidad;
     public javax.swing.JComboBox<String> cbTipo;
     public javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblAsignatura;
+    private javax.swing.JLabel lblBloom;
+    private javax.swing.JLabel lblCantidad;
+    private javax.swing.JLabel lblTipo;
     private javax.swing.JLabel lblTituloMain;
     public javax.swing.JTable tbLista;
     // End of variables declaration//GEN-END:variables
