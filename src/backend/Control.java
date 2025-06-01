@@ -62,14 +62,20 @@ public class Control implements ActionListener{
             ex.agregarPreguntasAExamen(tipo, nivel, cantidad, asignatura, main.tbLista);
 
             LimpiarPrincipal();
+        } else if (source == main.btnAbrirEvaluacion) {
+            vista.setVisible(true);
+            main.setVisible(false);
         } else if (source == main.btnSalir) {
             System.out.println("Botón salir presionado.");
             System.exit(0);
         }
         
         //Pantalla Preguntas
-        if (source == vista.btnIniciar) {
+        if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Iniciar")) {
             iniciarEvaluacion();
+        } else if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Salir")) {
+            vista.setVisible(false);
+            main.setVisible(true);
         } else if (source == vista.btnSiguiente) {
             vista.rdBtnOpcion1.setEnabled(true);
             vista.rdBtnOpcion2.setEnabled(true);
@@ -93,11 +99,6 @@ public class Control implements ActionListener{
         } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
             guardarRespuestaSeleccionada();
             evaluarRespuestas();
-        } else if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Salir")) {
-            vista.setVisible(false);
-            
-            Principal nuevaVista = new Principal();
-            nuevaVista.setVisible(true);
         } else if (source == vista.btnReiniciar) {
             reiniciarEvaluacion();
             mostrarPregunta(indice);
