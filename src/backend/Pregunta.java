@@ -4,6 +4,9 @@
  */
 package backend;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Pregunta {
     private int id;
     private String enunciado;
@@ -12,8 +15,9 @@ public class Pregunta {
     private String tipo;
     private String nivelBloom;
     private int tiempoEstimado;
+    private int asignaturas;
 
-    public Pregunta(int id, String enunciado, String r1, String r2, String r3, String r4, int correcta, String tipo, String nivelBloom, int tiempoEstimado) {
+    public Pregunta(int id, String enunciado, String r1, String r2, String r3, String r4, int correcta, String tipo, String nivelBloom, int tiempoEstimado, int asignaturas) {
         this.id = id;
         this.enunciado = enunciado;
         this.respuestas = new String[]{r1, r2, r3, r4};
@@ -21,6 +25,10 @@ public class Pregunta {
         this.tipo = tipo;
         this.nivelBloom = nivelBloom;
         this.tiempoEstimado = tiempoEstimado;
+        this.asignaturas = asignaturas;
+    }
+    
+    public Pregunta() {
     }
 
     public int getId() {

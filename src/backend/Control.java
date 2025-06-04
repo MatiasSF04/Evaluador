@@ -17,9 +17,36 @@ import javax.swing.*;
 public class Control implements ActionListener{
     Principal main;
     Evaluacion vista;
+    Pregunta preg = new Pregunta();
     List<Pregunta> preguntas;
     Map<Integer, Integer> respuestasUsuario;
     int indice = 0;
+    int codigoAsignatura;
+    String codigoTipo;
+    int codigoNivel;
+    int codigoCantidad;
+    
+    
+    public Map<String, Integer> asignaturas = Map.of(
+        "1. Matemáticas", 1,
+        "2. Programación", 2,
+        "3. Bases de Datos", 3,
+        "4. Sistemas Operativos y Redes", 4
+    );
+    
+    public Map<String, String> tipos = Map.of(
+        "Selección Múltiple", "selMultiple",
+        "Verdadero o Falso", "verOfal"
+    );
+    
+    public Map<String, Integer> niveles = Map.of(
+        "1. Recordar", 1,
+        "2. Comprender", 2,
+        "3. Aplicar", 3,
+        "4. Analizar", 4,
+        "5. Evaluar", 5,
+        "6. Crear", 6
+    );
     
     Conexion con = new Conexion();
     Connection cn = con.EnlaceSQL();
@@ -53,13 +80,20 @@ public class Control implements ActionListener{
         
         //Pantalla Crear
         if (source == main.btnAddPreguntas) {
-            String tipo = main.cbTipo.getSelectedItem().toString();
-            String nivel = main.cbBloom.getSelectedItem().toString();
-            int cantidad = (Integer) main.cbCantidad.getValue();
             String asignatura = main.cbAsignatura.getSelectedItem().toString();
-
-            Examen ex = new Examen();
-            ex.agregarPreguntasAExamen(tipo, nivel, cantidad, asignatura, main.tbLista);
+            codigoAsignatura = obtenerCodigoAsignatura(asignatura);
+            System.out.println(codigoAsignatura);
+            
+            String tipo = main.cbTipo.getSelectedItem().toString();
+            codigoTipo = obtenerCodigoTipo(tipo);
+            System.out.println(codigoTipo);
+            
+            String nivel = main.cbBloom.getSelectedItem().toString();
+            codigoNivel = obtenerCodigoNivel(nivel);
+            System.out.println(codigoNivel);
+            
+            codigoCantidad = (Integer) main.cbCantidad.getValue();
+            System.out.println(codigoCantidad);
 
             LimpiarPrincipal();
         } else if (source == main.btnAbrirEvaluacion) {
@@ -103,6 +137,16 @@ public class Control implements ActionListener{
             reiniciarEvaluacion();
             mostrarPregunta(indice);
         }
+    }
+    
+    public int obtenerCodigoAsignatura(String nombre) {
+        return asignaturas.getOrDefault(nombre, -1); // Devuelve -1 si el nombre de la asignatura no existe
+    }
+    public String obtenerCodigoTipo(String tipoUI) {
+        return tipos.getOrDefault(tipoUI, "null");
+    }
+    public int obtenerCodigoNivel(String nivelBloomUI) {
+        return niveles.getOrDefault(nivelBloomUI, -1);
     }
     
     private void LimpiarPrincipal() {
@@ -153,9 +197,14 @@ public class Control implements ActionListener{
         }
             
         try {
-            Statement st = cn.createStatement();
-            //ResultSet rs = st.executeQuery("SELECT * FROM preguntas");
-            ResultSet rs = st.executeQuery("SELECT * FROM Bloom.preguntas WHERE Tipo = 'selMultiple' && Nivel = '2' ORDER BY RAND() LIMIT 5");
+            //String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = '" + consultaAsignatura + "' && Tipo = '" + consultaTipo + "' && Nivel = '" + consultaNivel + "' ORDER BY RAND() LIMIT " + consultaCantidad;
+            String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = ? && Tipo = ? && Nivel = ? ORDER BY RAND() LIMIT ?";
+            PreparedStatement ps = cn.prepareStatement(sql);
+            ps.setInt(1, codigoAsignatura);         // Primer ?
+            ps.setString(2, "2");    // Segundo ?
+            ps.setString(3, "2");    // Tercer ?
+            ps.setString(4, "2");    // Cuarto ?
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 Pregunta p = new Pregunta(
@@ -168,7 +217,8 @@ public class Control implements ActionListener{
                     rs.getInt("Respuesta_Correcta"),
                     rs.getString("Tipo"),
                     rs.getString("Nivel"),
-                    rs.getInt("Tiempo")
+                    rs.getInt("Tiempo"),
+                    rs.getInt("Asignatura")
                 );
                 preguntas.add(p);
             }

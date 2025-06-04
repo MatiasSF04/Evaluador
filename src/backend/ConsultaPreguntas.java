@@ -17,10 +17,12 @@ import javax.swing.JOptionPane;
 public class ConsultaPreguntas {
     Conexion con = new Conexion();
     Connection cn = con.EnlaceSQL();
+    int ramo = 
+    String tipo;
+    int nivel;
+    int cantidad;
     
-    Principal Main;
-    
-    /*private void cargarPreguntasDesdeBD() {
+    private void cargarPreguntasDesdeBD() {
         if (cn == null) {
             JOptionPane.showMessageDialog(null, "No nos conectamos con la BD :(");
             return;
@@ -29,7 +31,8 @@ public class ConsultaPreguntas {
         try {
             Statement st = cn.createStatement();
             //ResultSet rs = st.executeQuery("SELECT * FROM preguntas");
-            ResultSet rs = st.executeQuery("SELECT * FROM Bloom.preguntas WHERE Tipo = 'selMultiple' && Nivel = '2' ORDER BY RAND() LIMIT 5");
+            //ResultSet rs = st.executeQuery("SELECT * FROM Bloom.preguntas WHERE Tipo = 'selMultiple' && Nivel = '2' ORDER BY RAND() LIMIT 5");
+            ResultSet rs = st.executeQuery("SELECT * FROM Bloom.preguntas WHERE Asignatura = '" + ramo + "' && Tipo = '" + tipo + "' && Nivel = '" + nivel + "' ORDER BY RAND() LIMIT " + cantidad);
 
             while (rs.next()) {
                 Pregunta p = new Pregunta(
@@ -44,14 +47,15 @@ public class ConsultaPreguntas {
                     rs.getString("Nivel"),
                     rs.getInt("Tiempo")
                 );
-                //preguntas.add(p);
+                preguntas.add(p);
             }
             con.CerrarConexion();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error al cargar preguntas: " + ex.getMessage());
         }
-    }*/
+    }
     
+    /*
     public List<Pregunta> obtenerPreguntasFiltradas(String tipo, String nivel, int cantidad) {
     List<Pregunta> preguntas = new ArrayList<>();
 
@@ -82,5 +86,5 @@ public class ConsultaPreguntas {
 
     return preguntas;
     }
-
+*/
 }

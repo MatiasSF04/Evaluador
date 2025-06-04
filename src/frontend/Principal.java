@@ -90,8 +90,13 @@ public class Principal extends javax.swing.JFrame {
         });
 
         cbTipo.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
-        cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "Seleccion Multiple", "Verdadero o Falso" }));
+        cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "Selección Múltiple", "Verdadero o Falso" }));
         cbTipo.setToolTipText("Aquí se elige el tipo de preguntas que vas a añadir al examen.");
+        cbTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTipoActionPerformed(evt);
+            }
+        });
 
         lblTipo.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         lblTipo.setText("Tipo de Pregunta");
@@ -238,6 +243,10 @@ public class Principal extends javax.swing.JFrame {
     private void btnAbrirEvaluacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirEvaluacionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAbrirEvaluacionActionPerformed
+
+    private void cbTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbTipoActionPerformed
 
     /**
      * @param args the command line arguments
