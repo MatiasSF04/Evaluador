@@ -70,7 +70,7 @@ public class Control implements ActionListener{
         this.vista.btnReiniciar.setEnabled(false);
         this.vista.btnSiguiente.setEnabled(false);
         
-        cargarPreguntasDesdeBD();
+        //cargarPreguntasDesdeBD();
     }
     
     @Override
@@ -121,7 +121,7 @@ public class Control implements ActionListener{
                 indice++;
                 mostrarPregunta(indice);
             } else {
-                evaluarRespuestas();
+                //evaluarRespuestas();
                 vista.btnSiguiente.setEnabled(false);
                 vista.btnReiniciar.setEnabled(true);
             }
@@ -133,7 +133,7 @@ public class Control implements ActionListener{
             }
         } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
             guardarRespuestaSeleccionada();
-            evaluarRespuestas();
+            //evaluarRespuestas();
         } else if (source == vista.btnReiniciar) {
             reiniciarEvaluacion();
             mostrarPregunta(indice);
@@ -202,31 +202,28 @@ public class Control implements ActionListener{
             ps.setInt(4, codigoCantidad);
             ResultSet rs = ps.executeQuery();
             
-            // Crear modelo de tabla con columnas
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("Enunciado");
             modelo.addColumn("Tipo");
             modelo.addColumn("Nivel");
             modelo.addColumn("Tiempo");
             modelo.addColumn("Asignatura");
-
-            // Limpiar tabla actual (opcional)
-            main.tbLista.setModel(new DefaultTableModel()); 
-
+            
+            int contador = 0;
             while (rs.next()) {
+                contador++;
                 String enunciado = rs.getString("Enunciado");
                 String tipo = rs.getString("Tipo");
                 String nivel = rs.getString("Nivel");
                 int tiempo = rs.getInt("Tiempo");
                 int asignaturaCodigo = rs.getInt("Asignatura");
 
-                // Si querís mostrar el nombre en vez del código:
                 String asignaturaNombre = obtenerNombreAsignatura(asignaturaCodigo);
 
-                // Agregar fila
                 modelo.addRow(new Object[]{enunciado, tipo, nivel, tiempo, asignaturaNombre});
             }
-            // Mostrar en la tabla
+            System.out.println("Preguntas encontradas: "+contador);
+            
             main.tbLista.setModel(modelo);
             con.CerrarConexion();
 
@@ -294,6 +291,10 @@ public class Control implements ActionListener{
         // Construir mensaje final
         StringBuilder resultado = new StringBuilder();
         resultado.append("Respuestas Correctas:\n");
+        if (total == 0) {
+            System.out.println("No hay preguntas para evaluar.");
+            return;
+        }
         resultado.append("Total = ").append((correctas * 100 / total)).append("%\n\n");
 
         resultado.append("- Según Taxonomía:\n");
