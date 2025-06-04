@@ -277,8 +277,6 @@ public class Evaluacion extends JFrame {
         // Muestra la ventana
         javax.swing.SwingUtilities.invokeLater(() -> {
             Evaluacion vista = new Evaluacion();
-            Control controlador = new Control(vista);
-            vista.setControlador(controlador);
             vista.setVisible(true);
         });
     }

@@ -5,7 +5,6 @@
 package backend;
 
 import frontend.Evaluacion;
-import backend.Conexion;
 import frontend.Principal;
 
 import java.awt.event.ActionEvent;
@@ -13,11 +12,11 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Control implements ActionListener{
     Principal main;
     Evaluacion vista;
-    Pregunta preg = new Pregunta();
     List<Pregunta> preguntas;
     Map<Integer, Integer> respuestasUsuario;
     int indice = 0;
@@ -94,6 +93,8 @@ public class Control implements ActionListener{
             
             codigoCantidad = (Integer) main.cbCantidad.getValue();
             System.out.println(codigoCantidad);
+            
+            cargarPreguntasDesdeBD();
 
             LimpiarPrincipal();
         } else if (source == main.btnAbrirEvaluacion) {
@@ -191,42 +192,57 @@ public class Control implements ActionListener{
     }
 
     private void cargarPreguntasDesdeBD() {
-        if (cn == null) {
-            JOptionPane.showMessageDialog(null, "No nos conectamos con la BD :(");
-            return;
-        }
-            
         try {
-            //String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = '" + consultaAsignatura + "' && Tipo = '" + consultaTipo + "' && Nivel = '" + consultaNivel + "' ORDER BY RAND() LIMIT " + consultaCantidad;
             String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = ? && Tipo = ? && Nivel = ? ORDER BY RAND() LIMIT ?";
             PreparedStatement ps = cn.prepareStatement(sql);
-            ps.setInt(1, codigoAsignatura);         // Primer ?
-            ps.setString(2, "2");    // Segundo ?
-            ps.setString(3, "2");    // Tercer ?
-            ps.setString(4, "2");    // Cuarto ?
+            
+            ps.setInt(1, codigoAsignatura);
+            ps.setString(2, codigoTipo);
+            ps.setInt(3, codigoNivel);
+            ps.setInt(4, codigoCantidad);
             ResultSet rs = ps.executeQuery();
+            
+            // Crear modelo de tabla con columnas
+            DefaultTableModel modelo = new DefaultTableModel();
+            modelo.addColumn("Enunciado");
+            modelo.addColumn("Tipo");
+            modelo.addColumn("Nivel");
+            modelo.addColumn("Tiempo");
+            modelo.addColumn("Asignatura");
+
+            // Limpiar tabla actual (opcional)
+            main.tbLista.setModel(new DefaultTableModel()); 
 
             while (rs.next()) {
-                Pregunta p = new Pregunta(
-                    rs.getInt("Id_Pregunta"),
-                    rs.getString("Enunciado"),
-                    rs.getString("Respuesta_1"),
-                    rs.getString("Respuesta_2"),
-                    rs.getString("Respuesta_3"),
-                    rs.getString("Respuesta_4"),
-                    rs.getInt("Respuesta_Correcta"),
-                    rs.getString("Tipo"),
-                    rs.getString("Nivel"),
-                    rs.getInt("Tiempo"),
-                    rs.getInt("Asignatura")
-                );
-                preguntas.add(p);
+                String enunciado = rs.getString("Enunciado");
+                String tipo = rs.getString("Tipo");
+                String nivel = rs.getString("Nivel");
+                int tiempo = rs.getInt("Tiempo");
+                int asignaturaCodigo = rs.getInt("Asignatura");
+
+                // Si querís mostrar el nombre en vez del código:
+                String asignaturaNombre = obtenerNombreAsignatura(asignaturaCodigo);
+
+                // Agregar fila
+                modelo.addRow(new Object[]{enunciado, tipo, nivel, tiempo, asignaturaNombre});
             }
+            // Mostrar en la tabla
+            main.tbLista.setModel(modelo);
             con.CerrarConexion();
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error al cargar preguntas: " + ex.getMessage());
         }
     } 
+    
+    public String obtenerNombreAsignatura(int codigo) {
+    for (Map.Entry<String, Integer> entry : asignaturas.entrySet()) {
+        if (entry.getValue() == codigo) {
+            return entry.getKey();
+        }
+    }
+    return "Desconocida";
+    }
    
     private void mostrarOpcionesVisibles(Pregunta p) {
         vista.rdBtnOpcion1.setVisible(p.getRespuestas(0) != null);
