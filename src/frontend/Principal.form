@@ -154,7 +154,7 @@
               <Font name="Helvetica Neue" size="48" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="A&#xf1;adir"/>
-            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Busca preguntas en la BD seg&#xfa;n el filtro&lt;br&gt;&#xa;proporcionado y las agrega al examen en curso.&#xa;&lt;/html&gt;"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPreguntasActionPerformed"/>
@@ -169,7 +169,7 @@
               <Font name="Helvetica Neue" size="48" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Iniciar"/>
-            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Mostrar el listado de todas las preguntas&lt;br&gt;&#xa;guardadas en la base de datos.&#xa;&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Abre el formulario para responder&lt;br&gt;&#xa;la evaluaci&#xf3;n con las preguntas seleccionadas.&#xa;&lt;/html&gt;"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
           </Properties>
           <Events>
@@ -206,7 +206,7 @@
                 <StringItem index="2" value="Verdadero o Falso"/>
               </StringArray>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Aqu&#xed; se elige el tipo de preguntas que vas a a&#xf1;adir al examen."/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Elige el tipo de preguntas que&lt;br&gt;&#xa;vas a a&#xf1;adir al examen.&#xa;&lt;/html&gt;"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbTipoActionPerformed"/>
@@ -248,7 +248,7 @@
                 <StringItem index="6" value="6. Crear"/>
               </StringArray>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Aqu&#xed; se elige el tipo de preguntas que vas a a&#xf1;adir al examen."/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Aqu&#xed; se elige el Nivel en la Taxonom&#xed;a&lt;br&gt;&#xa;de Bloom de preguntas que vas a&lt;br&gt;&#xa;a&#xf1;adir al examen.&#xa;&lt;/html&gt;"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbBloomActionPerformed"/>
@@ -280,7 +280,7 @@
                 <StringItem index="4" value="4. Sistemas Operativos y Redes"/>
               </StringArray>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Aqu&#xed; se elige el tipo de preguntas que vas a a&#xf1;adir al examen."/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Elige la asignatura de las preguntas&lt;br&gt;&#xa;que vas a a&#xf1;adir al examen.&#xa;&lt;/html&gt;"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbAsignaturaActionPerformed"/>
@@ -303,6 +303,7 @@
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
               <SpinnerModel initial="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Selecciona la cantidad de preguntas&lt;br&gt;&#xa;que quieres agregar seg&#xfa;n el filtro seleccionado.&#xa;&lt;/html&gt;"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>

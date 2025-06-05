@@ -64,7 +64,7 @@ public class Principal extends javax.swing.JFrame {
 
         btnAddPreguntas.setFont(new java.awt.Font("Helvetica Neue", 0, 48)); // NOI18N
         btnAddPreguntas.setText("Añadir");
-        btnAddPreguntas.setToolTipText("");
+        btnAddPreguntas.setToolTipText("<html>\nBusca preguntas en la BD según el filtro<br>\nproporcionado y las agrega al examen en curso.\n</html>");
         btnAddPreguntas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddPreguntasActionPerformed(evt);
@@ -73,7 +73,7 @@ public class Principal extends javax.swing.JFrame {
 
         btnAbrirEvaluacion.setFont(new java.awt.Font("Helvetica Neue", 0, 48)); // NOI18N
         btnAbrirEvaluacion.setText("Iniciar");
-        btnAbrirEvaluacion.setToolTipText("<html>\nMostrar el listado de todas las preguntas<br>\nguardadas en la base de datos.\n</html>");
+        btnAbrirEvaluacion.setToolTipText("<html>\nAbre el formulario para responder<br>\nla evaluación con las preguntas seleccionadas.\n</html>");
         btnAbrirEvaluacion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAbrirEvaluacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -92,7 +92,7 @@ public class Principal extends javax.swing.JFrame {
 
         cbTipo.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "Selección Múltiple", "Verdadero o Falso" }));
-        cbTipo.setToolTipText("Aquí se elige el tipo de preguntas que vas a añadir al examen.");
+        cbTipo.setToolTipText("<html>\nElige el tipo de preguntas que<br>\nvas a añadir al examen.\n</html>");
         cbTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbTipoActionPerformed(evt);
@@ -107,7 +107,7 @@ public class Principal extends javax.swing.JFrame {
 
         cbBloom.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         cbBloom.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "1. Recordar", "2. Comprender", "3. Aplicar", "4. Analizar", "5. Evaluar", "6. Crear" }));
-        cbBloom.setToolTipText("Aquí se elige el tipo de preguntas que vas a añadir al examen.");
+        cbBloom.setToolTipText("<html>\nAquí se elige el Nivel en la Taxonomía<br>\nde Bloom de preguntas que vas a<br>\nañadir al examen.\n</html>");
         cbBloom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbBloomActionPerformed(evt);
@@ -119,7 +119,7 @@ public class Principal extends javax.swing.JFrame {
 
         cbAsignatura.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         cbAsignatura.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Null", "1. Matemáticas", "2. Programación", "3. Bases de Datos", "4. Sistemas Operativos y Redes" }));
-        cbAsignatura.setToolTipText("Aquí se elige el tipo de preguntas que vas a añadir al examen.");
+        cbAsignatura.setToolTipText("<html>\nElige la asignatura de las preguntas<br>\nque vas a añadir al examen.\n</html>");
         cbAsignatura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbAsignaturaActionPerformed(evt);
@@ -130,6 +130,7 @@ public class Principal extends javax.swing.JFrame {
         lblCantidad.setText("Número de Preguntas");
 
         cbCantidad.setModel(new javax.swing.SpinnerNumberModel());
+        cbCantidad.setToolTipText("<html>\nSelecciona la cantidad de preguntas<br>\nque quieres agregar según el filtro seleccionado.\n</html>");
 
         tbLista.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

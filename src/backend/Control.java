@@ -134,6 +134,7 @@ public class Control implements ActionListener{
         } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
             guardarRespuestaSeleccionada();
             evaluarRespuestas();
+            
         } else if (source == vista.btnReiniciar) {
             reiniciarEvaluacion();
             mostrarPregunta(indice);

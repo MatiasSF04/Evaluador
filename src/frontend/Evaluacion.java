@@ -47,14 +47,17 @@ public class Evaluacion extends JFrame {
 
         btnAnterior.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         btnAnterior.setText("Pregunta Anterior");
+        btnAnterior.setToolTipText("<html>\n<strong>\"Pregunta Anterior\"</strong><br>\nMuestra la pregunta anterior.\n</html>");
         btnAnterior.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         btnIniciar.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         btnIniciar.setText("Iniciar");
+        btnIniciar.setToolTipText("<html>\nCarga las preguntas<br>\ne inicia la evaluación.\n</html>");
         btnIniciar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         btnSiguiente.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         btnSiguiente.setText("Pregunta Siguiente");
+        btnSiguiente.setToolTipText("<html>\n<strong>\"Pregunta Siguiente\"</strong><br>\nMuestra la pregunta Siguiente.<br>\n<strong>\"Evaluar\"</strong><br>\nBloquea los botones para responder.<br>\nColorea de rojo las respuestas incorrectas.<br>\nColorea de verde las respuestas correctas.<br>\nMuestra un resumen de las respuestas<br>correctas en la pantalla de información.\n</html>");
         btnSiguiente.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         panelPregunta.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));

@@ -113,6 +113,7 @@
               <Font name="Helvetica Neue" size="24" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Pregunta Anterior"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;strong&gt;&quot;Pregunta Anterior&quot;&lt;/strong&gt;&lt;br&gt;&#xa;Muestra la pregunta anterior.&#xa;&lt;/html&gt;"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
                 <BevelBorder/>
@@ -129,6 +130,7 @@
               <Font name="Helvetica Neue" size="24" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Iniciar"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Carga las preguntas&lt;br&gt;&#xa;e inicia la evaluaci&#xf3;n.&#xa;&lt;/html&gt;"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
                 <BevelBorder/>
@@ -145,6 +147,7 @@
               <Font name="Helvetica Neue" size="24" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Pregunta Siguiente"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;strong&gt;&quot;Pregunta Siguiente&quot;&lt;/strong&gt;&lt;br&gt;&#xa;Muestra la pregunta Siguiente.&lt;br&gt;&#xa;&lt;strong&gt;&quot;Evaluar&quot;&lt;/strong&gt;&lt;br&gt;&#xa;Bloquea los botones para responder.&lt;br&gt;&#xa;Colorea de rojo las respuestas incorrectas.&lt;br&gt;&#xa;Colorea de verde las respuestas correctas.&lt;br&gt;&#xa;Muestra un resumen de las respuestas&lt;br&gt;correctas en la pantalla de informaci&#xf3;n.&#xa;&lt;/html&gt;"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
                 <BevelBorder/>
