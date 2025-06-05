@@ -4,6 +4,7 @@
  */
 package backend;
 
+import backend.Pregunta;
 import frontend.Evaluacion;
 import frontend.Principal;
 
@@ -95,12 +96,14 @@ public class Control implements ActionListener{
             System.out.println(codigoCantidad);
             
             cargarPreguntasDesdeBD();
-
             LimpiarPrincipal();
+            
         } else if (source == main.btnAbrirEvaluacion) {
             vista.setVisible(true);
             main.setVisible(false);
+            
         } else if (source == main.btnSalir) {
+            con.CerrarConexion();
             System.out.println("Botón salir presionado.");
             System.exit(0);
         }
@@ -108,6 +111,7 @@ public class Control implements ActionListener{
         //Pantalla Preguntas
         if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Iniciar")) {
             iniciarEvaluacion();
+            //cargarPreguntasDesdeBD();
         } else if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Salir")) {
             vista.setVisible(false);
             main.setVisible(true);
@@ -133,7 +137,7 @@ public class Control implements ActionListener{
             }
         } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
             guardarRespuestaSeleccionada();
-            //evaluarRespuestas();
+            evaluarRespuestas();
         } else if (source == vista.btnReiniciar) {
             reiniciarEvaluacion();
             mostrarPregunta(indice);
@@ -191,7 +195,7 @@ public class Control implements ActionListener{
         }
     }
 
-    private void cargarPreguntasDesdeBD() {
+    /*private void cargarPreguntasDesdeBD() {
         try {
             String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = ? && Tipo = ? && Nivel = ? ORDER BY RAND() LIMIT ?";
             PreparedStatement ps = cn.prepareStatement(sql);
@@ -202,12 +206,14 @@ public class Control implements ActionListener{
             ps.setInt(4, codigoCantidad);
             ResultSet rs = ps.executeQuery();
             
-            DefaultTableModel modelo = new DefaultTableModel();
-            modelo.addColumn("Enunciado");
-            modelo.addColumn("Tipo");
-            modelo.addColumn("Nivel");
-            modelo.addColumn("Tiempo");
-            modelo.addColumn("Asignatura");
+            DefaultTableModel modelo = (DefaultTableModel) main.tbLista.getModel();
+            if (modelo.getColumnCount() == 0) {
+                modelo.addColumn("Enunciado");
+                modelo.addColumn("Tipo");
+                modelo.addColumn("Nivel");
+                modelo.addColumn("Tiempo");
+                modelo.addColumn("Asignatura");
+            }
             
             int contador = 0;
             while (rs.next()) {
@@ -219,18 +225,70 @@ public class Control implements ActionListener{
                 int asignaturaCodigo = rs.getInt("Asignatura");
 
                 String asignaturaNombre = obtenerNombreAsignatura(asignaturaCodigo);
-
                 modelo.addRow(new Object[]{enunciado, tipo, nivel, tiempo, asignaturaNombre});
             }
             System.out.println("Preguntas encontradas: "+contador);
-            
-            main.tbLista.setModel(modelo);
-            con.CerrarConexion();
-
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error al cargar preguntas: " + ex.getMessage());
         }
-    } 
+    } */
+    
+    private void cargarPreguntasDesdeBD() {
+        try {
+            //preguntas.clear();
+            
+            String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = ? && Tipo = ? && Nivel = ? ORDER BY RAND() LIMIT ?";
+            PreparedStatement ps = cn.prepareStatement(sql);
+            
+            ps.setInt(1, codigoAsignatura);
+            ps.setString(2, codigoTipo);
+            ps.setInt(3, codigoNivel);
+            ps.setInt(4, codigoCantidad);
+            ResultSet rs = ps.executeQuery();
+            
+            DefaultTableModel modelo = (DefaultTableModel) main.tbLista.getModel();
+            if (modelo.getColumnCount() == 0) {
+                modelo.addColumn("Enunciado");
+                modelo.addColumn("Tipo");
+                modelo.addColumn("Nivel");
+                modelo.addColumn("Tiempo");
+                modelo.addColumn("Asignatura");
+            } else {
+                modelo.setRowCount(0);
+            }
+            
+            int contador = 0;
+            while (rs.next()) {
+                contador++;
+                String enunciado = rs.getString("Enunciado");
+                String tipo = rs.getString("Tipo");
+                String nivel = rs.getString("Nivel");
+                int tiempo = rs.getInt("Tiempo");
+                int asignaturaCodigo = rs.getInt("Asignatura");
+
+                String asignaturaNombre = obtenerNombreAsignatura(asignaturaCodigo);
+                modelo.addRow(new Object[]{enunciado, tipo, nivel, tiempo, asignaturaNombre});
+                
+                Pregunta pregunta = new Pregunta(
+                    rs.getInt("Id_Pregunta"),
+                    enunciado,
+                    rs.getString("Respuesta_1"),
+                    rs.getString("Respuesta_2"),
+                    rs.getString("Respuesta_3"),
+                    rs.getString("Respuesta_4"),
+                    rs.getInt("Respuesta_Correcta"),
+                    tipo,
+                    rs.getString("Nivel"),
+                    tiempo,
+                    asignaturaCodigo
+                );
+                preguntas.add(pregunta);
+            }
+            System.out.println("Preguntas encontradas: "+contador);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al cargar preguntas: " + ex.getMessage());
+        }
+    }
     
     public String obtenerNombreAsignatura(int codigo) {
     for (Map.Entry<String, Integer> entry : asignaturas.entrySet()) {
@@ -262,9 +320,28 @@ public class Control implements ActionListener{
     
     //POR ARREGLAR
     private void evaluarRespuestas() {
-        int total = preguntas.size();
         int correctas = 0;
+        for (Pregunta p : preguntas) {
+            int id = p.getId();
+            if (respuestasUsuario.containsKey(id)) {
+                int seleccionUsuario = respuestasUsuario.get(id);
+                if (seleccionUsuario == p.getCorrecta()) {
+                    correctas++;
+                }
+            }
+        }
 
+        String resultado = "Respuestas correctas: " + correctas + " de " + preguntas.size();
+        vista.AreaPregunta.setText(resultado);
+        vista.btnSiguiente.setEnabled(false);
+        vista.btnAnterior.setEnabled(false);
+        vista.rdBtnOpcion1.setEnabled(false);
+        vista.rdBtnOpcion2.setEnabled(false);
+        vista.rdBtnOpcion3.setEnabled(false);
+        vista.rdBtnOpcion4.setEnabled(false);
+        vista.btnIniciar.setText("Salir");
+        
+        /*
         // Mapas para contar correctas y totales por categoría
         Map<String, Integer> correctasPorNivel = new HashMap<>();
         Map<String, Integer> totalPorNivel = new HashMap<>();
@@ -317,11 +394,20 @@ public class Control implements ActionListener{
         vista.btnReiniciar.setEnabled(true);
         vista.btnAnterior.setEnabled(false);
         vista.btnReiniciar.setEnabled(true);
+        */
     }
     
     private void reiniciarEvaluacion() {
         vista.grupoRespuestas.clearSelection();
         iniciarEvaluacion();
+        respuestasUsuario.clear();
+        vista.btnSiguiente.setEnabled(true);
+        vista.btnAnterior.setEnabled(false);
+        vista.btnReiniciar.setEnabled(false);
+        vista.rdBtnOpcion1.setEnabled(true);
+        vista.rdBtnOpcion2.setEnabled(true);
+        vista.rdBtnOpcion3.setEnabled(true);
+        vista.rdBtnOpcion4.setEnabled(true);
     }
     
     private void iniciarEvaluacion() {
@@ -335,9 +421,9 @@ public class Control implements ActionListener{
         //vista.txtInfo.setText("");
         mostrarInfo();
         vista.btnIniciar.setEnabled(false);
-        vista.btnSiguiente.setEnabled(true);
         vista.btnAnterior.setEnabled(false);
         vista.btnReiniciar.setEnabled(false);
+        vista.btnSiguiente.setEnabled(true);
         vista.btnSiguiente.setText("Pregunta Siguiente");
     }
     

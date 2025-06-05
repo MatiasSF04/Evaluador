@@ -4,9 +4,6 @@
  */
 package backend;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Pregunta {
     private int id;
     private String enunciado;

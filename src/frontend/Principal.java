@@ -5,6 +5,7 @@
 package frontend;
 
 import backend.Control;
+import javax.swing.table.DefaultTableModel;
 
 public class Principal extends javax.swing.JFrame {
 
@@ -132,13 +133,10 @@ public class Principal extends javax.swing.JFrame {
 
         tbLista.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Enunciado", "Tipo Pregunta", "Nivel Taxonomía", "Tiempo Estimado", "Asignatura"
             }
         ));
         jScrollPane1.setViewportView(tbLista);
