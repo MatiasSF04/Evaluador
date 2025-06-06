@@ -404,6 +404,7 @@ public class Control implements ActionListener{
                 Pregunta p = preguntas.get(i);
                 total++;
                 boolean esCorrecta = respuestaUsuario == p.getCorrecta();
+                System.out.println(esCorrecta);
                 if (esCorrecta) correctas++;
 
                 // Asignatura
