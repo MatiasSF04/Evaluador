@@ -6,6 +6,7 @@ package backend;
 
 import frontend.Evaluacion;
 import frontend.Principal;
+import java.awt.Color;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,14 +25,29 @@ public class Control implements ActionListener{
     String codigoTipo;
     int codigoNivel;
     int codigoCantidad;
+    boolean enRevision = false;
+    boolean revision = false;
     
     
-    public Map<String, Integer> asignaturas = Map.of(
+    public static Map<String, Integer> asignaturas = Map.of(
         "1. Matemáticas", 1,
         "2. Programación", 2,
         "3. Bases de Datos", 3,
         "4. Sistemas Operativos y Redes", 4
     );
+    
+    public static String obtenerNombreAsignatura(int codigo) {
+    for (Map.Entry<String, Integer> entry : asignaturas.entrySet()) {
+        if (entry.getValue() == codigo) {
+            return entry.getKey();
+        }
+    }
+    return "Desconocida";
+    }
+    
+    public static int obtenerCodigoAsignatura(String nombre) {
+        return asignaturas.getOrDefault(nombre, -1);
+    }
     
     public Map<String, String> tipos = Map.of(
         "Selección Múltiple", "selMultiple",
@@ -74,23 +90,42 @@ public class Control implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+        Random rd = new Random();
         
         //Pantalla Crear
         if (source == main.btnAddPreguntas) {
             String asignatura = main.cbAsignatura.getSelectedItem().toString();
-            codigoAsignatura = obtenerCodigoAsignatura(asignatura);
-            System.out.println(codigoAsignatura);
+            if ("Null".equals(asignatura)) {
+                List<String> clavesAsig = new ArrayList<>(asignaturas.keySet());
+                String claveAleatoria = clavesAsig.get(rd.nextInt(clavesAsig.size()));
+                codigoAsignatura = asignaturas.get(claveAleatoria);
+            } else {
+                codigoAsignatura = asignaturas.get(asignatura);
+            }
+            System.out.println("Asignatura Seleccionada: "+codigoAsignatura);
             
             String tipo = main.cbTipo.getSelectedItem().toString();
-            codigoTipo = obtenerCodigoTipo(tipo);
-            System.out.println(codigoTipo);
+            if ("Null".equals(tipo)) {
+                List<String> clavesTipo = new ArrayList<>(tipos.keySet());
+                String claveAleatoria = clavesTipo.get(rd.nextInt(clavesTipo.size()));
+                codigoTipo = tipos.get(claveAleatoria);
+            } else {
+                codigoTipo = obtenerCodigoTipo(tipo);
+            }
+            System.out.println("Tipo Seleccionado: "+codigoTipo);
             
             String nivel = main.cbBloom.getSelectedItem().toString();
-            codigoNivel = obtenerCodigoNivel(nivel);
-            System.out.println(codigoNivel);
+            if ("Null".equals(nivel)) {
+                List<String> clavesNivel = new ArrayList<>(niveles.keySet());
+                String claveAleatoria = clavesNivel.get(rd.nextInt(clavesNivel.size()));
+                codigoNivel = niveles.get(claveAleatoria);
+            } else {
+                codigoNivel = obtenerCodigoNivel(nivel);
+            }
+            System.out.println("Nivel Seleccionado: "+codigoNivel);
             
             codigoCantidad = (Integer) main.cbCantidad.getValue();
-            System.out.println(codigoCantidad);
+            System.out.println("Cantidad Seleccionada: "+codigoCantidad+"\n");
             
             cargarPreguntasDesdeBD();
             LimpiarPrincipal();
@@ -111,6 +146,11 @@ public class Control implements ActionListener{
         } else if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Salir")) {
             vista.setVisible(false);
             main.setVisible(true);
+        } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
+            revision = true;
+            guardarRespuestaSeleccionada();
+            mostrarPregunta(indice);
+            evaluarRespuestas();
         } else if (source == vista.btnSiguiente) {
             vista.rdBtnOpcion1.setEnabled(true);
             vista.rdBtnOpcion2.setEnabled(true);
@@ -121,7 +161,6 @@ public class Control implements ActionListener{
                 indice++;
                 mostrarPregunta(indice);
             } else {
-                //evaluarRespuestas();
                 vista.btnSiguiente.setEnabled(false);
                 vista.btnReiniciar.setEnabled(true);
             }
@@ -131,19 +170,12 @@ public class Control implements ActionListener{
                 indice--;
                 mostrarPregunta(indice);
             }
-        } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
-            guardarRespuestaSeleccionada();
-            evaluarRespuestas();
-            
         } else if (source == vista.btnReiniciar) {
+            revision = false;
             reiniciarEvaluacion();
-            mostrarPregunta(indice);
         }
     }
     
-    public int obtenerCodigoAsignatura(String nombre) {
-        return asignaturas.getOrDefault(nombre, -1);
-    }
     public String obtenerCodigoTipo(String tipoUI) {
         return tipos.getOrDefault(tipoUI, "null");
     }
@@ -170,7 +202,17 @@ public class Control implements ActionListener{
 
         mostrarOpcionesVisibles(p);
         vista.grupoRespuestas.clearSelection();
-
+        
+        vista.rdBtnOpcion1.setOpaque(true);
+        vista.rdBtnOpcion2.setOpaque(true);
+        vista.rdBtnOpcion3.setOpaque(true);
+        vista.rdBtnOpcion4.setOpaque(true);
+        
+        vista.rdBtnOpcion1.setBackground(UIManager.getColor("RadioButton.background"));
+        vista.rdBtnOpcion2.setBackground(UIManager.getColor("RadioButton.background"));
+        vista.rdBtnOpcion3.setBackground(UIManager.getColor("RadioButton.background"));
+        vista.rdBtnOpcion4.setBackground(UIManager.getColor("RadioButton.background"));
+        
         if (respuestasUsuario.containsKey(p.getId())) {
             int seleccion = respuestasUsuario.get(p.getId());
             switch (seleccion) {
@@ -178,6 +220,29 @@ public class Control implements ActionListener{
                 case 1: vista.rdBtnOpcion2.setSelected(true); break;
                 case 2: vista.rdBtnOpcion3.setSelected(true); break;
                 case 3: vista.rdBtnOpcion4.setSelected(true); break;
+            }
+
+            if (revision) {
+                vista.rdBtnOpcion1.setEnabled(false);
+                vista.rdBtnOpcion2.setEnabled(false);
+                vista.rdBtnOpcion3.setEnabled(false);
+                vista.rdBtnOpcion4.setEnabled(false);
+                if (seleccion != p.getCorrecta()){
+                    switch (seleccion) {
+                        case 0: vista.rdBtnOpcion1.setBackground(Color.red);break;
+                        case 1: vista.rdBtnOpcion2.setBackground(Color.red); break;
+                        case 2: vista.rdBtnOpcion3.setBackground(Color.red); break;
+                        case 3: vista.rdBtnOpcion4.setBackground(Color.red); break;
+                    }
+                }
+                
+                int respuestaCorrecta = p.getCorrecta();
+                switch (respuestaCorrecta) {
+                        case 0: vista.rdBtnOpcion1.setBackground(Color.green);break;
+                        case 1: vista.rdBtnOpcion2.setBackground(Color.green); break;
+                        case 2: vista.rdBtnOpcion3.setBackground(Color.green); break;
+                        case 3: vista.rdBtnOpcion4.setBackground(Color.green); break;
+                    }
             }
         }
 
@@ -190,6 +255,23 @@ public class Control implements ActionListener{
             vista.btnSiguiente.setText("Pregunta Siguiente");
             vista.btnIniciar.setText("Iniciar");
         }
+    }
+    
+    private void colorearRespuestas(Pregunta p, int seleccion) {
+        JRadioButton[] botones = {
+            vista.rdBtnOpcion1,
+            vista.rdBtnOpcion2,
+            vista.rdBtnOpcion3,
+            vista.rdBtnOpcion4
+        };
+        
+        // Colorear incorrecta
+        if (seleccion != p.getCorrecta()) {
+            botones[seleccion].setBackground(Color.RED);
+        }
+        
+        // Colorear correcta
+        botones[p.getCorrecta()].setBackground(Color.GREEN);
     }
     
     private void cargarPreguntasDesdeBD() {
@@ -248,15 +330,6 @@ public class Control implements ActionListener{
             JOptionPane.showMessageDialog(null, "Error al cargar preguntas: " + ex.getMessage());
         }
     }
-    
-    public String obtenerNombreAsignatura(int codigo) {
-    for (Map.Entry<String, Integer> entry : asignaturas.entrySet()) {
-        if (entry.getValue() == codigo) {
-            return entry.getKey();
-        }
-    }
-    return "Desconocida";
-    }
    
     private void mostrarOpcionesVisibles(Pregunta p) {
         vista.rdBtnOpcion1.setVisible(p.getRespuestas(0) != null);
@@ -275,85 +348,6 @@ public class Control implements ActionListener{
         if (seleccion >= 0) {
             respuestasUsuario.put(preguntas.get(indice).getId(), seleccion);
         }
-    }
-    
-    //POR ARREGLAR
-    private void evaluarRespuestas() {
-        int correctas = 0;
-        for (Pregunta p : preguntas) {
-            int id = p.getId();
-            if (respuestasUsuario.containsKey(id)) {
-                int seleccionUsuario = respuestasUsuario.get(id);
-                if (seleccionUsuario == p.getCorrecta()) {
-                    correctas++;
-                }
-            }
-        }
-
-        String resultado = "Respuestas correctas: " + correctas + " de " + preguntas.size();
-        vista.AreaPregunta.setText(resultado);
-        vista.btnSiguiente.setEnabled(false);
-        vista.btnAnterior.setEnabled(false);
-        vista.rdBtnOpcion1.setEnabled(false);
-        vista.rdBtnOpcion2.setEnabled(false);
-        vista.rdBtnOpcion3.setEnabled(false);
-        vista.rdBtnOpcion4.setEnabled(false);
-        vista.btnIniciar.setText("Salir");
-        
-        /*
-        // Mapas para contar correctas y totales por categoría
-        Map<String, Integer> correctasPorNivel = new HashMap<>();
-        Map<String, Integer> totalPorNivel = new HashMap<>();
-
-        Map<String, Integer> correctasPorTipo = new HashMap<>();
-        Map<String, Integer> totalPorTipo = new HashMap<>();
-
-        for (int i = 0; i < preguntas.size(); i++) {
-            Pregunta p = preguntas.get(i);
-            Integer seleccion = respuestasUsuario.get(i);
-
-            // Conteo general
-            if (seleccion != null && p.getCorrecta() == seleccion) {
-                correctas++;
-                correctasPorNivel.put(p.getNivelBloom(), correctasPorNivel.getOrDefault(p.getNivelBloom(), 0) + 1);
-                correctasPorTipo.put(p.getTipo(), correctasPorTipo.getOrDefault(p.getTipo(), 0) + 1);
-            }
-
-            // Conteo total por categoría
-            totalPorNivel.put(p.getNivelBloom(), totalPorNivel.getOrDefault(p.getNivelBloom(), 0) + 1);
-            totalPorTipo.put(p.getTipo(), totalPorTipo.getOrDefault(p.getTipo(), 0) + 1);
-        }
-
-        // Construir mensaje final
-        StringBuilder resultado = new StringBuilder();
-        resultado.append("Respuestas Correctas:\n");
-        if (total == 0) {
-            System.out.println("No hay preguntas para evaluar.");
-            return;
-        }
-        resultado.append("Total = ").append((correctas * 100 / total)).append("%\n\n");
-
-        resultado.append("- Según Taxonomía:\n");
-        for (String nivel : totalPorNivel.keySet()) {
-            int totalNivel = totalPorNivel.get(nivel);
-            int correctNivel = correctasPorNivel.getOrDefault(nivel, 0);
-            resultado.append("  ").append(nivel).append(" = ").append((correctNivel * 100 / totalNivel)).append("%\n");
-        }
-
-        resultado.append("\n- Según Tipo:\n");
-        for (String tipo : totalPorTipo.keySet()) {
-            int totalTipo = totalPorTipo.get(tipo);
-            int correctTipo = correctasPorTipo.getOrDefault(tipo, 0);
-            resultado.append("  ").append(tipo).append(" = ").append((correctTipo * 100 / totalTipo)).append("%\n");
-        }
-
-        vista.mostrarMensaje(resultado.toString());
-
-        // Habilitar botón Reiniciar, deshabilitar otros
-        vista.btnReiniciar.setEnabled(true);
-        vista.btnAnterior.setEnabled(false);
-        vista.btnReiniciar.setEnabled(true);
-        */
     }
     
     private void reiniciarEvaluacion() {
@@ -390,5 +384,45 @@ public class Control implements ActionListener{
         int tiempoEstimado = preguntas.stream().mapToInt(Pregunta::getTiempoEstimado).sum();
         vista.txtInfo.setText("==================\n  INFORMACIÓN DEL EXAMEN\n==================\n\nCantidad de Preguntas: " + totalPreguntas +
                 "\nTiempo Estimado: " + tiempoEstimado + " mins");
+    }
+    
+    private void evaluarRespuestas(/*int index*/) {
+        //Acá tenemos que hacer la lógica para que haga el resumen en texto basicamente
+        
+        
+        /*vista.rdBtnOpcion1.setEnabled(false);
+        vista.rdBtnOpcion2.setEnabled(false);
+        vista.rdBtnOpcion3.setEnabled(false);
+        vista.rdBtnOpcion4.setEnabled(false);
+        Pregunta p = preguntas.get(index);
+        
+        mostrarOpcionesVisibles(p);
+        vista.AreaPregunta.setText(p.getEnunciado());
+        
+        //Obtener la respuesta del Usuario
+        if (respuestasUsuario.containsKey(p.getId())) {
+            int seleccion = respuestasUsuario.get(p.getId());
+            int correcta = p.getCorrecta();
+            
+            // Array para recorrer fácilmente los botones
+            JRadioButton[] botones = {
+                vista.rdBtnOpcion1,
+                vista.rdBtnOpcion2,
+                vista.rdBtnOpcion3,
+                vista.rdBtnOpcion4
+            };
+            
+            // Primero seleccionamos el botón correspondiente
+            botones[seleccion].setSelected(true);
+            
+            // Si la selección es incorrecta, marcarla en rojo
+            if (seleccion != correcta) {
+                botones[seleccion].setBackground(Color.RED);
+            }
+            
+            // Marcar la respuesta correcta en verde
+            botones[correcta].setBackground(Color.GREEN);
+        }*/
+        System.out.println("Cargar evaluarRespuestas()");
     }
 }
