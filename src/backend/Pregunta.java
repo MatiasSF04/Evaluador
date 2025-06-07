@@ -60,11 +60,6 @@ public class Pregunta {
         return asignaturas;
     }
     
-    // Getter del nombre de la asignatura usando Control
-    public String getNombreAsignatura() {
-        return Control.obtenerNombreAsignatura(asignaturas);
-    }
-    
     public void setAsignatura(int asignaturas) {
         this.asignaturas = asignaturas;
     }
