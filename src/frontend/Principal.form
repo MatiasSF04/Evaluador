@@ -301,7 +301,7 @@
         <Component class="javax.swing.JSpinner" name="cbCantidad">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-              <SpinnerModel initial="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
+              <SpinnerModel initial="0" maximum="3" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Selecciona la cantidad de preguntas&lt;br&gt;&#xa;que quieres agregar seg&#xfa;n el filtro seleccionado.&#xa;&lt;/html&gt;"/>
           </Properties>

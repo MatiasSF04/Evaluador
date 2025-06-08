@@ -129,7 +129,7 @@ public class Principal extends javax.swing.JFrame {
         lblCantidad.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         lblCantidad.setText("Número de Preguntas");
 
-        cbCantidad.setModel(new javax.swing.SpinnerNumberModel());
+        cbCantidad.setModel(new javax.swing.SpinnerNumberModel(0, 0, 3, 1));
         cbCantidad.setToolTipText("<html>\nSelecciona la cantidad de preguntas<br>\nque quieres agregar según el filtro seleccionado.\n</html>");
 
         tbLista.setModel(new javax.swing.table.DefaultTableModel(

@@ -27,7 +27,6 @@ public class Control implements ActionListener{
     int codigoCantidad;
     boolean revision = false;
     
-    
     public static Map<String, Integer> asignaturas = Map.of(
         "1. Matemáticas", 1,
         "2. Programación", 2,
@@ -99,6 +98,7 @@ public class Control implements ActionListener{
         this.vista.btnSiguiente.addActionListener(this);
         this.vista.btnAnterior.addActionListener(this);
         this.vista.btnReiniciar.addActionListener(this);
+        this.vista.btnSalir.addActionListener(this);
         
         this.main.btnAddPreguntas.addActionListener(this);
         this.main.btnAbrirEvaluacion.addActionListener(this);
@@ -163,9 +163,9 @@ public class Control implements ActionListener{
         }
         
         //Pantalla Preguntas
-        if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Iniciar")) {
+        if (source == vista.btnIniciar) {
             iniciarEvaluacion();
-        } else if (source == vista.btnIniciar && vista.btnIniciar.getText().equals("Salir")) {
+        } else if (source == vista.btnSalir) {
             vista.setVisible(false);
             main.setVisible(true);
         } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
@@ -266,7 +266,6 @@ public class Control implements ActionListener{
         vista.btnAnterior.setEnabled(index > 0);
         if (index == preguntas.size() - 1) {
             vista.btnSiguiente.setText("Evaluar");
-            vista.btnIniciar.setText("Salir");
             vista.btnIniciar.setEnabled(true);
         } else {
             vista.btnSiguiente.setText("Pregunta Siguiente");
@@ -355,10 +354,6 @@ public class Control implements ActionListener{
         vista.btnSiguiente.setEnabled(true);
         vista.btnAnterior.setEnabled(false);
         vista.btnReiniciar.setEnabled(false);
-        vista.rdBtnOpcion1.setEnabled(true);
-        vista.rdBtnOpcion2.setEnabled(true);
-        vista.rdBtnOpcion3.setEnabled(true);
-        vista.rdBtnOpcion4.setEnabled(true);
     }
     
     private void iniciarEvaluacion() {
@@ -369,6 +364,10 @@ public class Control implements ActionListener{
         vista.rdBtnOpcion2.setText("Opcion 2");
         vista.rdBtnOpcion3.setText("Opcion 3");
         vista.rdBtnOpcion4.setText("Opcion 4");
+        vista.rdBtnOpcion1.setBackground(UIManager.getColor("RadioButton.background"));
+        vista.rdBtnOpcion2.setBackground(UIManager.getColor("RadioButton.background"));
+        vista.rdBtnOpcion3.setBackground(UIManager.getColor("RadioButton.background"));
+        vista.rdBtnOpcion4.setBackground(UIManager.getColor("RadioButton.background"));
         mostrarInfo();
         vista.btnIniciar.setEnabled(false);
         vista.btnAnterior.setEnabled(false);
