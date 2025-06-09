@@ -43,11 +43,6 @@ public class Control implements ActionListener{
             default -> "Desconocida";
         };
     }
-
-    
-    //public static int obtenerCodigoAsignatura(String nombre) {
-    //    return asignaturas.getOrDefault(nombre, -1);
-    //}
     
     public Map<String, String> tipos = Map.of(
         "Selección Múltiple", "selMultiple",
