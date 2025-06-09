@@ -19,7 +19,7 @@ public class Control implements ActionListener{
     Principal main;
     Evaluacion vista;
     List<Pregunta> preguntas;
-    Map<Integer, Integer> respuestasUsuario;
+    Map<Integer, Integer> respuestasUsuario;    
     int indice = 0;
     int codigoAsignatura;
     String codigoTipo;
@@ -45,9 +45,9 @@ public class Control implements ActionListener{
     }
 
     
-    public static int obtenerCodigoAsignatura(String nombre) {
-        return asignaturas.getOrDefault(nombre, -1);
-    }
+    //public static int obtenerCodigoAsignatura(String nombre) {
+    //    return asignaturas.getOrDefault(nombre, -1);
+    //}
     
     public Map<String, String> tipos = Map.of(
         "Selección Múltiple", "selMultiple",
@@ -169,11 +169,11 @@ public class Control implements ActionListener{
             vista.setVisible(false);
             main.setVisible(true);
         } else if (source == vista.btnSiguiente && vista.btnSiguiente.getText().equals("Evaluar")) {
+            guardarRespuestaSeleccionada();
+            evaluarRespuestas();
             vista.btnReiniciar.setEnabled(true);
             revision = true;
-            guardarRespuestaSeleccionada();
             mostrarPregunta(indice);
-            evaluarRespuestas();
         } else if (source == vista.btnSiguiente) {
             vista.rdBtnOpcion1.setEnabled(true);
             vista.rdBtnOpcion2.setEnabled(true);
@@ -209,9 +209,9 @@ public class Control implements ActionListener{
     private void mostrarPregunta(int index) {
         Pregunta p = preguntas.get(index);
         int correcta = (p.getCorrecta())-1;
-
-        vista.AreaPregunta.setText("<html><div style='width:400px;'>" + p.getEnunciado() + "</div></html>");
         
+        //Ancho de texto para enunciado y respuestas
+        vista.AreaPregunta.setText("<html><div style='width:400px;'>" + p.getEnunciado() + "</div></html>");
         vista.rdBtnOpcion1.setText("<html><div style='width:200px;'>" + p.getRespuestas(0) + "</div></html>");
         vista.rdBtnOpcion2.setText("<html><div style='width:200px;'>" + p.getRespuestas(1) + "</div></html>");
         vista.rdBtnOpcion3.setText("<html><div style='width:200px;'>" + p.getRespuestas(2) + "</div></html>");
@@ -220,16 +220,17 @@ public class Control implements ActionListener{
         mostrarOpcionesVisibles(p);
         vista.grupoRespuestas.clearSelection();
         
+        //Activar la opcion de modificar color en las respuestas
         vista.rdBtnOpcion1.setOpaque(true);
         vista.rdBtnOpcion2.setOpaque(true);
         vista.rdBtnOpcion3.setOpaque(true);
         vista.rdBtnOpcion4.setOpaque(true);
-        
         vista.rdBtnOpcion1.setBackground(UIManager.getColor("RadioButton.background"));
         vista.rdBtnOpcion2.setBackground(UIManager.getColor("RadioButton.background"));
         vista.rdBtnOpcion3.setBackground(UIManager.getColor("RadioButton.background"));
         vista.rdBtnOpcion4.setBackground(UIManager.getColor("RadioButton.background"));
         
+        //Mostrar la respuesta seleccionada por el usuario
         if (respuestasUsuario.containsKey(p.getId())) {
             int seleccion = respuestasUsuario.get(p.getId());
             switch (seleccion) {
@@ -239,6 +240,7 @@ public class Control implements ActionListener{
                 case 3: vista.rdBtnOpcion4.setSelected(true); break;
             }
 
+            //En el modo de revision, colorea de rojo las incorrectas y de verde las correctas.
             if (revision) {
                 vista.rdBtnOpcion1.setEnabled(false);
                 vista.rdBtnOpcion2.setEnabled(false);
@@ -253,8 +255,7 @@ public class Control implements ActionListener{
                     }
                 }
                 
-                int respuestaCorrecta = correcta;
-                switch (respuestaCorrecta) {
+                switch (correcta) {
                         case 0: vista.rdBtnOpcion1.setBackground(Color.green);break;
                         case 1: vista.rdBtnOpcion2.setBackground(Color.green); break;
                         case 2: vista.rdBtnOpcion3.setBackground(Color.green); break;
@@ -266,13 +267,11 @@ public class Control implements ActionListener{
         vista.btnAnterior.setEnabled(index > 0);
         if (index == preguntas.size() - 1) {
             vista.btnSiguiente.setText("Evaluar");
-            vista.btnIniciar.setEnabled(true);
         } else {
             vista.btnSiguiente.setText("Pregunta Siguiente");
-            vista.btnIniciar.setText("Iniciar");
         }
     }
-    
+                
     private void cargarPreguntasDesdeBD() {
         try {
             String sql = "SELECT * FROM Bloom.preguntas WHERE Asignatura = ? && Tipo = ? && Nivel = ? ORDER BY RAND() LIMIT ?";
@@ -383,134 +382,81 @@ public class Control implements ActionListener{
                 "\nTiempo Estimado: " + tiempoEstimado + " mins");
     }
     
-    private void evaluarRespuestas() {
-        int total = 0;
-        int correctas = 0;
-
-        // Inicializar contadores con tus claves
-        Map<String, int[]> resumenAsignaturas = new LinkedHashMap<>();
-        for (String nombre : asignaturas.keySet()) {
-            resumenAsignaturas.put(nombre, new int[]{0, 0});
+    public void evaluarRespuestas() {
+        if (respuestasUsuario.isEmpty()) {
+            vista.mostrarMensaje("No se ha respondido ninguna pregunta.");
+            return;
         }
 
-        Map<String, int[]> resumenTipos = new LinkedHashMap<>();
-        for (String nombre : tipos.keySet()) {
-            resumenTipos.put(nombre, new int[]{0, 0});
+        int totalRespondidas = 0;
+        int totalCorrectas = 0;
+
+        Map<String, int[]> porAsignatura = new HashMap<>();
+        Map<String, int[]> porTipo = new HashMap<>();
+        Map<String, int[]> porNivel = new HashMap<>();
+
+        for (Pregunta pregunta : preguntas) {
+            int id = pregunta.getId();
+            int seleccion = respuestasUsuario.getOrDefault(id, -1);
+            if (seleccion == -1) continue;
+
+            totalRespondidas++;
+
+            boolean esCorrecta = seleccion == (pregunta.getCorrecta() - 1);
+            if (esCorrecta) totalCorrectas++;
+
+            String nombreAsig = obtenerNombreAsignatura(pregunta.getCodigoAsignatura());
+            String tipo = pregunta.getTipo();
+            String nivel = obtenerNombreNivel(Integer.parseInt(pregunta.getNivelBloom()));
+
+            // Asignatura
+            porAsignatura.putIfAbsent(nombreAsig, new int[]{0, 0});
+            porAsignatura.get(nombreAsig)[0]++; // respondidas
+            if (esCorrecta) porAsignatura.get(nombreAsig)[1]++; // correctas
+
+            // Tipo
+            porTipo.putIfAbsent(tipo, new int[]{0, 0});
+            porTipo.get(tipo)[0]++;
+            if (esCorrecta) porTipo.get(tipo)[1]++;
+
+            // Nivel
+            porNivel.putIfAbsent(nivel, new int[]{0, 0});
+            porNivel.get(nivel)[0]++;
+            if (esCorrecta) porNivel.get(nivel)[1]++;
         }
 
-        Map<String, int[]> resumenNiveles = new LinkedHashMap<>();
-        for (String nombre : niveles.keySet()) {
-            resumenNiveles.put(nombre, new int[]{0, 0});
-        }
+        StringBuilder resumen = new StringBuilder();
+        resumen.append("==================\n   RESULTADOS\n==================\n\n");
+        resumen.append("Preguntas Respondidas: ").append(totalRespondidas).append("\n");
+        resumen.append("Respuestas Correctas: ").append(totalCorrectas).append("\n");
+        resumen.append("Porcentaje de Acierto: ")
+               .append(totalRespondidas > 0 ? (int)(((double) totalCorrectas / totalRespondidas) * 100) : 0)
+               .append("%\n\n");
 
-        // Recorrer preguntas respondidas
-        for (int i = 0; i < preguntas.size(); i++) {
-            Integer respuestaUsuario = respuestasUsuario.get(i);
-            if (respuestaUsuario != null) {
-                Pregunta p = preguntas.get(i);
-                int respuestaCorrecta = (p.getCorrecta())-1;
-                total++;
-                
-                boolean esCorrecta = respuestaUsuario == respuestaCorrecta;
-                
-                if (esCorrecta) correctas++;
+        resumen.append(">>> POR ASIGNATURA <<<\n");
+        porAsignatura.forEach((asig, datos) -> {
+            resumen.append(asig).append(": ")
+                    .append(datos[0] > 0 ? (int)(((double) datos[1] / datos[0]) * 100) : 0)
+                    .append("%  (")
+                    .append(datos[1]).append("/").append(datos[0]).append(")\n");
+        });
 
-                // Asignatura
-                String nombreAsignatura = obtenerNombreAsignatura(p.getCodigoAsignatura());
-                int[] datosAsignatura = resumenAsignaturas.get(nombreAsignatura);
-                if (datosAsignatura != null) {
-                    datosAsignatura[1]++;
-                    if (esCorrecta) datosAsignatura[0]++;
-                }
+        resumen.append("\n>>> POR TIPO <<<\n");
+        porTipo.forEach((tipo, datos) -> {
+            resumen.append(tipo).append(": ")
+                    .append(datos[0] > 0 ? (int)(((double) datos[1] / datos[0]) * 100) : 0)
+                    .append("%  (")
+                    .append(datos[1]).append("/").append(datos[0]).append(")\n");
+        });
 
-                // Tipo
-                String tipoUI = tipos.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals(p.getTipo()))
-                        .map(Map.Entry::getKey)
-                        .findFirst().orElse("Desconocido");
-                int[] datosTipo = resumenTipos.get(tipoUI);
-                if (datosTipo != null) {
-                    datosTipo[1]++;
-                    if (esCorrecta) datosTipo[0]++;
-                }
+        resumen.append("\n>>> POR NIVEL <<<\n");
+        porNivel.forEach((nivel, datos) -> {
+            resumen.append(nivel).append(": ")
+                    .append(datos[0] > 0 ? (int)(((double) datos[1] / datos[0]) * 100) : 0)
+                    .append("%  (")
+                    .append(datos[1]).append("/").append(datos[0]).append(")\n");
+        });
 
-                // Nivel
-                String nombreNivel = obtenerNombreNivel(getNivel(p.getNivelBloom()));
-                int[] datosNivel = resumenNiveles.get(nombreNivel);
-                if (datosNivel != null) {
-                    datosNivel[1]++;
-                    if (esCorrecta) datosNivel[0]++;
-                }
-            }
-        }
-
-        // Mostrar resumen
-        // Extraer los datos desde los mapas
-        int[] mate = resumenAsignaturas.getOrDefault("1. Matemáticas", new int[]{0,0});
-        int[] progra = resumenAsignaturas.getOrDefault("2. Programación", new int[]{0,0});
-        int[] bd = resumenAsignaturas.getOrDefault("3. Bases de Datos", new int[]{0,0});
-        int[] redes = resumenAsignaturas.getOrDefault("4. Sistemas Operativos y Redes", new int[]{0,0});
-
-        int[] tipoSM = resumenTipos.getOrDefault("Selección Múltiple", new int[]{0,0});
-        int[] tipoVF = resumenTipos.getOrDefault("Verdadero o Falso", new int[]{0,0});
-
-        int[] n1 = resumenNiveles.getOrDefault("1. Recordar", new int[]{0,0});
-        int[] n2 = resumenNiveles.getOrDefault("2. Comprender", new int[]{0,0});
-        int[] n3 = resumenNiveles.getOrDefault("3. Aplicar", new int[]{0,0});
-        int[] n4 = resumenNiveles.getOrDefault("4. Analizar", new int[]{0,0});
-        int[] n5 = resumenNiveles.getOrDefault("5. Evaluar", new int[]{0,0});
-        int[] n6 = resumenNiveles.getOrDefault("6. Crear", new int[]{0,0});
-
-        // Formatear resumen con text block
-        String resumen = String.format("""
-                =====================
-                || Resumen Respuestas Correctas ||
-                =====================
-                Total Preguntas Respondidas: %s
-                Total Correctas: %s (%.2f%%)
-
-                -> Total por Asignatura:
-                1. Matemáticas: %s / %s (%.2f%%)
-                2. Programación: %s / %s (%.2f%%)
-                3. Bases de Datos: %s / %s (%.2f%%)
-                4. Sistemas y Redes: %s / %s (%.2f%%)
-
-                -> Total por Tipo:
-                - Selección Múltiple: %s / %s (%.2f%%)
-                - Verdadero o Falso: %s / %s (%.2f%%)
-
-                -> Total por Nivel:
-                1. Recordar: %s / %s (%.2f%%)
-                2. Comprender: %s / %s (%.2f%%)
-                3. Aplicar: %s / %s (%.2f%%)
-                4. Analizar: %s / %s (%.2f%%)
-                5. Evaluar: %s / %s (%.2f%%)
-                6. Crear: %s / %s (%.2f%%)
-                ==========================
-                """,
-                total, correctas, porcentaje(correctas, total),
-
-                mate[0], mate[1], porcentaje(mate[0], mate[1]),
-                progra[0], progra[1], porcentaje(progra[0], progra[1]),
-                bd[0], bd[1], porcentaje(bd[0], bd[1]),
-                redes[0], redes[1], porcentaje(redes[0], redes[1]),
-
-                tipoSM[0], tipoSM[1], porcentaje(tipoSM[0], tipoSM[1]),
-                tipoVF[0], tipoVF[1], porcentaje(tipoVF[0], tipoVF[1]),
-
-                n1[0], n1[1], porcentaje(n1[0], n1[1]),
-                n2[0], n2[1], porcentaje(n2[0], n2[1]),
-                n3[0], n3[1], porcentaje(n3[0], n3[1]),
-                n4[0], n4[1], porcentaje(n4[0], n4[1]),
-                n5[0], n5[1], porcentaje(n5[0], n5[1]),
-                n6[0], n6[1], porcentaje(n6[0], n6[1])
-        );
-
-        // Mostrar en la interfaz
-        vista.txtInfo.setText(resumen);
-    }
-    
-    private double porcentaje(int correctas, int total) {
-        return total == 0 ? 0.0 : ((double) correctas / total) * 100;
+        vista.txtInfo.setText(resumen.toString());
     }
 }
