@@ -1,6 +1,7 @@
 
 /build/
 /nbproject/private/
+/src/backend/config.properties
 
 # Ignore macOS data
 .DS_Store
